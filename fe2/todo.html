@@ -3,21 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>todo 리스트</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="todo.js"></script>
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Segoe UI', 'Arial', sans-serif;
+        }
         
+        body {
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            color: #202124;
+        }
         
+        .todo-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 480px;
+        }
+        
+        .todo-header {
+            padding: 24px 24px 12px 24px;
+            text-align: left;
+        }
+        
+        .todo-header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #202124;
+        }
+        
+        .todo-form {
+            display: flex;
+            padding: 12px 24px 24px 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .todo-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 8px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        
+        .todo-input:focus {
+            border-color: #1a73e8;
+        }
+        
+        .todo-button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 0 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.25px;
+            transition: background-color 0.2s;
+        }
+        
+        .todo-button:hover {
+            background-color: #1765cc;
+        }
+        
+        .todo-list {
+            list-style-type: none;
+            padding: 8px 0;
+        }
+        
+        .todo-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.1s;
+        }
+        
+        .todo-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .todo-checkbox {
+            margin-right: 16px;
+            width: 18px;
+            height: 18px;
+            border-radius: 2px;
+            cursor: pointer;
+            accent-color: #1a73e8;
+        }
+        
+        .todo-text {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .todo-delete {
+            color: #5f6368;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-left: 8px;
+            opacity: 0.6;
+            transition: background-color 0.2s;
+        }
+        
+        .todo-delete:hover {
+            background-color: rgba(95, 99, 104, 0.1);
+            opacity: 1;
+        }
+        
+        .completed {
+            text-decoration: line-through;
+            color: #80868b;
+        }
+        
+        @media (max-width: 600px) {
+            .todo-container {
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            
+            body {
+                padding: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container mx-auto">
-        <h1 class="text-4xl font-bold">Todo List</h1>
-        <input type="text" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Add a new todo">
-        <button class="bg-blue-500 text-white p-2 rounded-md">Add</button>
+    <!-- 요구사항
+         1. 할일을 추가할 수 있고 추가 된 할일을 다하면 클릭해서 완료상태로 변경하고 싶어요.
+         2. 완료 된 리스트도 따로 보고 싶어요.
+         3. 내 브라우저에서만 리스트가 유지 됐으면 좋겠어요.
+    -->
+    <div class="todo-container">
+        <div class="todo-header">
+            <h1>할 일</h1>
+        </div>
+        <div class="todo-form">
+            <input type="text" class="todo-input" placeholder="Add a task">
+            <button class="todo-button">추가</button>
+        </div>
+        <ul class="todo-list">
+        </ul>
     </div>
 </body>
 </html>
