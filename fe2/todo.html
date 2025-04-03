@@ -78,6 +78,13 @@
             background-color: #1765cc;
         }
         
+
+        .section-title {
+            padding: 16px 24px 8px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #5f6368;
+        }
         .todo-list {
             list-style-type: none;
             padding: 8px 0;
@@ -129,6 +136,29 @@
             background-color: rgba(95, 99, 104, 0.1);
             opacity: 1;
         }
+
+        .completed-section {
+            border-top: 1px solid #e0e0e0;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .completed-text {
+            text-decoration: line-through;
+            color: #80868b;
+        }
+        
+        .completed-section .todo-item:hover {
+            background-color: #f1f3f4;
+        }
+        
+        .section-divider {
+            height: 8px;
+            background-color: #fafafa;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
         
         .completed {
             text-decoration: line-through;
@@ -162,90 +192,114 @@
             <input type="text" class="todo-input" placeholder="Add a task">
             <button class="todo-button">추가</button>
         </div>
-        <ul class="todo-list">
-        </ul>
+        <div class="active-section">
+            <div class="section-title">진행중</div>
+            <ul class="todo-list">
+            </ul>
+        </div>
+        <div class="completed-section">
+            <div class="section-title">완료</div>
+            <ul class="todo-list">
+            </ul>
+        </div>
     </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-    const todoList = document.querySelector('.todo-list');
-    const todoInput = document.querySelector('.todo-input');
-    const todoButton = document.querySelector('.todo-button');
+        const activeList = document.querySelector('.active-section .todo-list');
+        const completedList = document.querySelector('.completed-section .todo-list');
+        const todoInput = document.querySelector('.todo-input');
+        const todoButton = document.querySelector('.todo-button');
 
-    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
 
-    renderTodos();
+        renderTodos();
 
-    todoButton.addEventListener('click', addTodo);
-    todoInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            addTodo();
-        }
-    });
-
-    function renderTodos() {
-        todoList.innerHTML = '';
-        
-        todos.forEach(todo => {
-            const todoItem = createTodoItem(todo);
-            todoList.appendChild(todoItem);
+        todoButton.addEventListener('click', addTodo);
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
         });
-    }
 
-    function createTodoItem(todo) {
-        const todoItem = document.createElement('li');
-        todoItem.className = 'todo-item';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'todo-checkbox';
-        checkbox.checked = todo.completed;
+        function renderTodos() {
+            activeList.innerHTML = '';
+            completedList.innerHTML = '';
+            
+            todos.forEach(todo => {
+                const todoItem = createTodoItem(todo);
+                if (todo.completed) {
+                    completedList.appendChild(todoItem);
+                } else {
+                    activeList.appendChild(todoItem);
+                }
+            });
+        }
 
-        const span = document.createElement('span');
-        span.className = 'todo-text';
-        if (todo.completed) span.classList.add('completed');
-        span.textContent = todo.text;
+        function createTodoItem(todo) {
+            const todoItem = document.createElement('li');
+            todoItem.className = 'todo-item';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'todo-checkbox';
+            checkbox.checked = todo.completed;
 
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'todo-delete';
-        deleteButton.textContent = '×';
-        
-        todoItem.appendChild(checkbox);
-        todoItem.appendChild(span);
-        todoItem.appendChild(deleteButton);
-        
-        setupTodoItemListeners(todoItem, checkbox, deleteButton, span, todo);
-        
-        return todoItem;
-    }
+            const span = document.createElement('span');
+            span.className = 'todo-text';
+            if (todo.completed) {
+                span.classList.add('completed');
 
-    function addTodo() {
-        const todoText = todoInput.value.trim();
-        if (todoText === '') return;
+            }
+            span.textContent = todo.text;
 
-        const todo = {
-            id: Date.now(), // 고유 ID 생성. 정확히 어떤 항목을 삭제해야하는지 구분
-            text: todoText,
-            completed: false
-        };
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'todo-delete';
+            deleteButton.textContent = '×';
+            
+            todoItem.appendChild(checkbox);
+            todoItem.appendChild(span);
+            todoItem.appendChild(deleteButton);
+            
+            setupTodoItemListeners(todoItem, checkbox, deleteButton, span, todo);
+            
+            return todoItem;
+        }
 
-        todos.push(todo);
-        
-        // localStorage 업데이트
-        saveTodos();
-        
-        const todoItem = createTodoItem(todo);
-        todoList.appendChild(todoItem);
-        
-        todoInput.value = '';
-    }
+        function addTodo() {
+            const todoText = todoInput.value.trim();
+            if (todoText === '') return;
 
-    function setupTodoItemListeners(todoItem, checkbox, deleteButton, span, todo) {
+            const todo = {
+                id: Date.now(), // 고유 ID 생성. 정확히 어떤 항목을 삭제해야하는지 구분
+                text: todoText,
+                completed: false
+            };
+
+            todos.push(todo);
+            
+            // localStorage 업데이트
+            saveTodos();
+            
+            const todoItem = createTodoItem(todo);
+            activeList.appendChild(todoItem);
+            
+            todoInput.value = '';
+        }
+
+        function setupTodoItemListeners(todoItem, checkbox, deleteButton, span, todo) {
         checkbox.addEventListener('change', () => {
             todo.completed = checkbox.checked;
             span.classList.toggle('completed', checkbox.checked);
             saveTodos();
+            // 완료된 할일은 리스트에서 삭제
+            todoItem.remove();
+            if (todo.completed) {
+                completedList.appendChild(todoItem); // 완료 리스트에 추가
+            } else {
+                activeList.appendChild(todoItem);
+            }
         });
 
         deleteButton.addEventListener('click', () => {
@@ -255,10 +309,10 @@
         });
     }
 
-    function saveTodos() {
-        localStorage.setItem('todos', JSON.stringify(todos));
-    }
-});
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+    });
     </script>
 </body>
 </html>
